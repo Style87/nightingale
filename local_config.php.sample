@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Your database authentication information goes here
+ */
+define('DB_HOST', 'localhost');
+define('DB_PORT', 3306);
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', 'root');
+define('DB_NAME', 'mDatabase');
+
+define('TIMEZONE', 'America/Los_Angeles');
+
+/**
+ * The environment for this instance
+ */
+define('ENVIRONMENT', 'localhost');
+$PERMISSIONS[ENVIRONMENT] = PERMISSION_SET;
