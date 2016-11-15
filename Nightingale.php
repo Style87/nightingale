@@ -40,7 +40,7 @@ class Nightingale
   protected $git;
   public $id = NULL;
 
-  public function authenticate() {
+  static public function authenticate() {
       if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
           $authorization = $_SERVER['HTTP_AUTHORIZATION'];
       } else {
@@ -48,6 +48,16 @@ class Nightingale
               $headers = apache_request_headers();
               $authorization = $headers['HTTP_AUTHORIZATION'];
           }
+      }
+
+      $auth = explode(':', base64_decode(substr($authorization, 6)));
+
+      if (!is_array($auth) || count($auth) != 2)
+      {
+        header('WWW-Authenticate: Basic realm="NIGHTINGALE interface"');
+        header('HTTP/1.0 401 Unauthorized');
+        echo _('Access denied');
+        exit();
       }
 
       list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', base64_decode(substr($authorization, 6)));
@@ -75,7 +85,10 @@ class Nightingale
                       $adapter->connect(DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME);
                       $this->_adapter = $adapter;
                   } catch (Exception $e) {
-                      $this->error("[{$e->getCode()}] " . $e->getMessage());
+                    Logger::log($e->getMessage());
+
+                    $this->error("[{$e->getCode()}] " . $e->getMessage());
+
                   }
               }
           }

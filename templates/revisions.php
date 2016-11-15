@@ -8,7 +8,7 @@
     <h2><?php echo __('Revisions'); ?></h2>
 
     <?php if ($PERMISSIONS[ENVIRONMENT]['ADD_REVISION']) : ?>
-      <div class="row" style="margin-bottom:15px;">
+      <div class="row">
         <div class="col-xs-12">
           <?php if ($migrationCount > 0) : ?>
             <a href="<?= BASE_URL ?>/revisions/displayAddRevision" class="btn btn-info btn-raised">Add Revision</a>

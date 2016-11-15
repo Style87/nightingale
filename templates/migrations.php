@@ -3,7 +3,7 @@
   <div id="left-header">
     <h2><?php echo __('Migrations'); ?></h2>
 
-    <div class="row" style="margin-bottom:15px;">
+    <div class="row">
       <div class="col-xs-12">
         <?php if ($PERMISSIONS[ENVIRONMENT]['ADD_MIGRATION']) : ?>
           <a href="<?= BASE_URL ?>/migrations/displayAddmigration" class="btn btn-info btn-raised">Add Migration</a>

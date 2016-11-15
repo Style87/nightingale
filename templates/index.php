@@ -70,10 +70,13 @@
               <a href="<?= BASE_URL ?>/dashboard/">Dashboard</a>
             </li>
             <li class="<?= $this->router->getControllerString() == 'RevisionsController' ? 'active' : ''?>">
-              <a href="<?= BASE_URL ?>/revisions/">Revision</a>
+              <a href="<?= BASE_URL ?>/revisions/">Revisions</a>
             </li>
             <li class="<?= $this->router->getControllerString() == 'MigrationsController' ? 'active' : ''?>">
               <a href="<?= BASE_URL ?>/migrations/">Migrations</a>
+            </li>
+            <li class="<?= $this->router->getControllerString() == 'SchemaController' ? 'active' : ''?>">
+              <a href="<?= BASE_URL ?>/schema/">Schema</a>
             </li>
             <?php if (strtolower(ENVIRONMENT) == 'localhost') : ?>
               <li class="<?= $this->router->getControllerString() == 'SqliteController' ? 'active' : ''?>">

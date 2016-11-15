@@ -108,3 +108,33 @@ span.check {
   max-height: 3.6em;
   overflow:auto;
 }
+
+#left-container #left-header div.row:last-child {
+  margin-bottom:15px;
+}
+
+.no-border {
+  border: none !important;
+}
+.no-margin {
+  margin: 0px;
+}
+.label.label-schema {
+  padding: .7em;
+  margin: 10px 1px;
+  display: inline-block;
+  border-radius: 4px;
+  text-transform: uppercase;
+  width:84.81px;
+  font-size: 1.1em;
+}
+.inline-block {
+  display:inline-block;
+}
+
+.inline {
+  display:inline;
+}
+.nowrap {
+  white-space: nowrap;
+}

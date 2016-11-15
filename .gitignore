@@ -1,4 +1,3 @@
-config.php
 sqlite/*.db
 local_config.php
 data/meta/revision

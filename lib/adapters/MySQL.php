@@ -38,13 +38,45 @@ class NIGHTINGALE_Adapter_MySQL implements NIGHTINGALE_Adapter_Interface
 
     public function getSchema()
     {
-        return array_merge(
-            $this->getTables(),
-            $this->getViews(),
-            $this->getTriggers(),
-            $this->getProcedures(),
-            $this->getFunctions()
-        );
+      $schema = [
+        'tables' => [],
+        'views' => [],
+        'triggers' => [],
+        'procedures' => [],
+        'functions' => [],
+      ];
+      $sql = '';
+      foreach ($this->getTables() as $table)
+      {
+        $schemaObject = $this->getSchemaObject($table);
+        $schema['tables'][$table] = $schemaObject;
+        $sql .= $schemaObject . "\n";
+      }
+      foreach ($this->getViews() as $table)
+      {
+        $schemaObject = $this->getSchemaObject($table);
+        $schema['views'][$table] = $schemaObject;
+        $sql .= $schemaObject . "\n";
+      }
+      foreach ($this->getTriggers() as $table)
+      {
+        $schemaObject = $this->getSchemaObject($table);
+        $schema['triggers'][$table] = $schemaObject;
+        $sql .= $schemaObject . "\n";
+      }
+      foreach ($this->getProcedures() as $table)
+      {
+        $schemaObject = $this->getSchemaObject($table);
+        $schema['procedures'][$table] = $schemaObject;
+        $sql .= $schemaObject . "\n";
+      }
+      foreach ($this->getFunctions() as $table)
+      {
+        $schemaObject = $this->getSchemaObject($table);
+        $schema['functions'][$table] = $schemaObject;
+        $sql .= $schemaObject . "\n";
+      }
+      return $schema;
     }
 
     public function getTables($prefix = false)
@@ -136,7 +168,7 @@ class NIGHTINGALE_Adapter_MySQL implements NIGHTINGALE_Adapter_Interface
                 $index = 2;
                 break;
             default:
-                throw new NIGHTINGALE_Exception("<strong>$name</strong> not found in the database");
+                return false;
         }
 
         $query = "SHOW CREATE $type `$name`";
