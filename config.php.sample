@@ -69,6 +69,8 @@ define('NIGHTINGALE_SCHEMA_PATH', NIGHTINGALE_ROOT_PATH . DS . NIGHTINGALE_SCHEM
 
 define('BASE_URL', '/nightingale');
 
+define('NIGHTINGALE_GIT_BRANCH', 'dev');
+
 ini_set('magic_quotes_gpc', 'Off');
 error_reporting(E_ALL ^ E_NOTICE);
 

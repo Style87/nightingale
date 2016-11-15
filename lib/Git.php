@@ -16,7 +16,7 @@ class Git {
     {
       shell_exec('git fetch');
 
-      if ( (int)trim(shell_exec('git rev-list master..' . NIGHTINGALE_GIT_REMOTE . '/master --count')) > 0 )
+      if ( (int)trim(shell_exec('git rev-list ' . NIGHTINGALE_GIT_BRANCH . '..' . NIGHTINGALE_GIT_REMOTE . '/' . NIGHTINGALE_GIT_BRANCH . ' --count')) > 0 )
       {
         return 'Need to pull';
       }
@@ -173,15 +173,15 @@ class Git {
   {
     $this->fetch();
 
-    return trim(shell_exec('git rev-list master..' . NIGHTINGALE_GIT_REMOTE . '/master --count'));
+    return trim(shell_exec('git rev-list ' . NIGHTINGALE_GIT_BRANCH . '..' . NIGHTINGALE_GIT_REMOTE . '/' . NIGHTINGALE_GIT_BRANCH . ' --count'));
   }
 
   public function getPushCount()
   {
     $this->fetch();
 
-    $local = count(explode("\n", trim(shell_exec('git rev-list master'))));
-    $remote = count(explode("\n", trim(shell_exec('git rev-list ' . NIGHTINGALE_GIT_REMOTE . '/master'))));
+    $local = count(explode("\n", trim(shell_exec('git rev-list ' . NIGHTINGALE_GIT_BRANCH))));
+    $remote = count(explode("\n", trim(shell_exec('git rev-list ' . NIGHTINGALE_GIT_REMOTE . '/' . NIGHTINGALE_GIT_BRANCH))));
 
     return max(0, $local - $remote);
   }
@@ -262,7 +262,7 @@ class Git {
 
   public function push()
   {
-    shell_exec('git push ' . NIGHTINGALE_GIT_REMOTE . ' master');
+    shell_exec('git push ' . NIGHTINGALE_GIT_REMOTE . ' ' . NIGHTINGALE_GIT_BRANCH);
   }
 
   public function clean()
