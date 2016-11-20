@@ -58,5 +58,11 @@ class GitController extends Nightingale
     {
       $this->git->pushMigration($this->_database, $migration);
     }
+
+    $diskSchema = Schema::factory();
+    foreach($diskSchema as $schema)
+    {
+      $this->git->pushSchemaObject($this->_database, $schema);
+    }
   }
 }

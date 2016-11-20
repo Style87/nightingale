@@ -81,12 +81,17 @@ class Git {
 
   public function isMigrationCommitted($migration)
   {
-    return !in_array(NIGHTINGALE_MIGRATIONS_PATH_RELATIVE . DS . $migration->getId() . ".migration", $this->getUntrackedFiles());
+    return !in_array($migration->getRelativeDir() . DS . $migration->getId() . ".migration", $this->getUntrackedFiles());
   }
 
   public function isRevisionMigrationCommitted($revision, $migration)
   {
     return !in_array($revision->getRelativeDirName() . DS . $migration->getFileName(), $this->getUntrackedFiles(true));
+  }
+
+  public function isSchemaObjectCommitted($schema)
+  {
+    return !in_array($schema->getRelativeDir() . DS . $schema->getFileName(), $this->getUntrackedFiles());
   }
 
   public function pushMigration(&$db, $migration = NULL)
@@ -96,11 +101,16 @@ class Git {
       return false;
     }
 
-    $this->addMigration($db, $migration);
+    if (!$this->addMigration($db, $migration))
+    {
+      return false;
+    }
 
     shell_exec('git commit -m "Commit migration '.$migration->getId().' and predecessors."');
     $this->pull($db);
     $this->push();
+
+    return true;
   }
 
   protected function addMigration(&$db, $migration = NULL)
@@ -115,6 +125,7 @@ class Git {
     {
       $this->addMigration($db, Migration::findFirst($db, $migration->getPreviousMigrationId()));
     }
+    return true;
   }
 
   public function pushRevision(&$db, $revision)
@@ -167,6 +178,36 @@ class Git {
 
     shell_exec('git rm ' . NIGHTINGALE_MIGRATIONS_PATH . DS . $migration->getFileName());
     shell_exec('git add ' . $migration->getFileName(true));
+  }
+
+  public function pushSchemaObject(&$db, $schema = NULL)
+  {
+    if ($schema == NULL)
+    {
+      return false;
+    }
+
+    if (!$this->addSchemaObject($schema))
+    {
+      return false;
+    }
+
+    shell_exec('git commit -m "Commit schema object '.$schema->getName().'."');
+    $this->push();
+
+    return true;
+  }
+
+  protected function addSchemaObject($schema = NULL)
+  {
+    if ($schema == NULL || $this->isSchemaObjectCommitted($schema))
+    {
+      return false;
+    }
+
+    shell_exec('git add ' . $schema->getFileName(true));
+
+    return true;
   }
 
   public function getPullCount()

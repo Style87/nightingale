@@ -12,15 +12,36 @@ class Schema
   {
     $class = get_called_class();
     $return = [];
-    $dir = new DirectoryIterator($class::getDir());
-    foreach ($dir as $file) {
-      if (!$file->isDot() && $file->getExtension() == self::EXTENSION) {
-        $schema = new $class();
-        $schema->setName(str_replace('.' . $file->getExtension(), '', $file->getBasename()));
-        $schema->setSql(file_get_contents($file->getPathname()));
-        $schema->setOnDisk(true);
 
-        $return[$schema->name] = $schema;
+    if ($class == get_class())
+    {
+      foreach (['SchemaTable', 'SchemaFunction', 'SchemaProcedure', 'SchemaTrigger', 'SchemaView'] as $class)
+      {
+        $dir = new DirectoryIterator($class::getDir());
+        foreach ($dir as $file) {
+          if (!$file->isDot() && $file->getExtension() == self::EXTENSION) {
+            $schema = new $class();
+            $schema->setName(str_replace('.' . $file->getExtension(), '', $file->getBasename()));
+            $schema->setSql(file_get_contents($file->getPathname()));
+            $schema->setOnDisk(true);
+
+            $return[$schema->name] = $schema;
+          }
+        }
+      }
+    }
+    else
+    {
+      $dir = new DirectoryIterator($class::getDir());
+      foreach ($dir as $file) {
+        if (!$file->isDot() && $file->getExtension() == self::EXTENSION) {
+          $schema = new $class();
+          $schema->setName(str_replace('.' . $file->getExtension(), '', $file->getBasename()));
+          $schema->setSql(file_get_contents($file->getPathname()));
+          $schema->setOnDisk(true);
+
+          $return[$schema->name] = $schema;
+        }
       }
     }
 
