@@ -21,7 +21,7 @@ class NIGHTINGALE_Adapter_MySQL implements NIGHTINGALE_Adapter_Interface
             $this->_connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         } catch (PDOException $e) {
-          trigger_error($e->getMessage());
+          error_log($e->getMessage());
           throw new Exception($e->getMessage(), (int) $e->getCode());
         }
     }
@@ -31,7 +31,7 @@ class NIGHTINGALE_Adapter_MySQL implements NIGHTINGALE_Adapter_Interface
         try {
             return $this->_connection->query($sql);
         } catch (PDOException $e) {
-          trigger_error($e->getMessage());
+          error_log($e->getMessage());
           throw new Exception($e->getMessage(), (int) $e->getCode());
         }
     }
