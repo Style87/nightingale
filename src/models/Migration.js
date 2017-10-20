@@ -141,10 +141,10 @@ var Migration = Backbone.Model.extend({
         }
 
         _.each(childMigrations, function(migration){
-          let childMigration = new Migration({id: migration.id});
+          let childMigration = new Migration(migration);
           childMigration.fetch({
             projectId: self.projectId,
-            versionId: this.get('version')
+            versionId: self.get('version')
           });
           project = childMigration.migrateDown(con);
         });

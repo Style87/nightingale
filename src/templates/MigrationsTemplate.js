@@ -9,6 +9,8 @@ let template = `
         <th>Id</th>
         <th>Description</th>
         <th>Parent Migration Id</th>
+        <th>Has Run</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -17,6 +19,12 @@ let template = `
           <td><%= migration.id %></td>
           <td><%= migration.description %></td>
           <td><%= migration.parentMigrationId %></td>
+          <td>
+            <% if(migration.hasRun) { %>
+              <i class="fa fa-check text-success"></i>
+            <% } %>
+          </td>
+          <td><input type="button" class="btn btn-default pull-right migrate" value="Migrate" data-id="<%= migration.id %>"></td>
         </tr>
       <% }); %>
       <% if (_.size(model.migrations) == 0) { %>
