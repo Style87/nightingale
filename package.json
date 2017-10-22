@@ -1,13 +1,13 @@
 {
-  "name": "monitor",
-  "productName": "Monitor",
-  "description": "File watcher.",
-  "version": "0.0.2",
+  "name": "nightingale",
+  "productName": "Nightingale",
+  "description": "Database versioning application.",
+  "version": "0.0.1",
   "author": "Lucas Hartzell",
   "license": "MIT",
   "main": "app/background.js",
   "build": {
-    "appId": "com.github.Style87.monitor",
+    "appId": "com.github.Style87.nightingale",
     "files": [
       "app/**/*",
       "node_modules/**/*",
