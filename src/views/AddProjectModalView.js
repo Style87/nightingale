@@ -6,8 +6,14 @@ require('jquery-validation');
 require('bootstrap-toggle');
 import BackboneModal from '../core/BackboneModal/BackboneModal.js';
 import BaseModalView from '../core/BaseModalView.js';
-import { script } from '../core/MigrateUpPhpScript.js';
+import { script as MigrateScript } from '../core/PhpScripts/Migrate.js';
+import { script as AdapterMySqlScript } from '../core/PhpScripts/Adapter_MySQL.js';
+import { script as MigrationScript } from '../core/PhpScripts/Migration.js';
+import { script as ProjectScript } from '../core/PhpScripts/Project.js';
+import { script as VersionScript} from '../core/PhpScripts/Version.js';
+
 import { script as postCheckoutHookScript } from '../core/PostCheckoutHookScript.js';
+import { script as GitIgnore } from '../core/GitIgnore.js';
 import { template as AddProjectModalHeaderTemplate } from '../templates/AddProjectModalHeaderTemplate.js';
 import { template as AddProjectModalBodyTemplate } from '../templates/AddProjectModalBodyTemplate.js';
 import { template as AddProjectModalFooterTemplate } from '../templates/AddProjectModalFooterTemplate.js';
@@ -116,8 +122,19 @@ var AddProjectModalView = new BackboneModal({
       var projectNightingaleVersionsDirectory = path.resolve(projectNightingaleDirectory, 'versions');
       var projectNightingaleMigrationsDirectory = path.resolve(projectNightingaleDirectory, 'migrations');
       var projectNightingaleDbFile = path.resolve(projectNightingaleMetaDirectory, 'db.json');
-      var projectNightingaleMigrateUpPhpFile = path.resolve(projectNightingaleMetaDirectory, 'MigrateUp.php');
+      
+      var projectNightingaleAdapterMySqlPhpFile = path.resolve(projectNightingaleMetaDirectory, 'Adapter_MySQL.php');
+      var projectNightingaleConfigPhpFile = path.resolve(projectNightingaleMetaDirectory, 'config.php');
+      var projectNightingaleMigratePhpFile = path.resolve(projectNightingaleMetaDirectory, 'Migrate.php');
+      var projectNightingaleMigrationPhpFile = path.resolve(projectNightingaleMetaDirectory, 'Migration.php');
+      var projectNightingaleProjectPhpFile = path.resolve(projectNightingaleMetaDirectory, 'Project.php');
+      var projectNightingaleVersionPhpFile = path.resolve(projectNightingaleMetaDirectory, 'Version.php');
+      
       var projectNightingaleGitPostCheckoutHookFile = path.resolve(project.path, '.git', 'hooks', 'post-checkout');
+      
+      var projectNightingaleGitIgnoreFile = path.resolve(project.path, '.gitignore');
+
+      let isExists = jetpack.exists(projectNightingaleDirectory);
 
       // Create the nightingale project directories
       jetpack.dir(projectNightingaleDirectory);
@@ -129,9 +146,31 @@ var AddProjectModalView = new BackboneModal({
         storage: fileAsync
       });
 
-      // Create the migration scripts
-      jetpack.file(projectNightingaleMigrateUpPhpFile);
-      jetpack.write(projectNightingaleMigrateUpPhpFile, script);
+      // Create the php scripts
+      jetpack.file(projectNightingaleAdapterMySqlPhpFile);
+      jetpack.write(projectNightingaleAdapterMySqlPhpFile, AdapterMySqlScript);
+      
+      jetpack.file(projectNightingaleConfigPhpFile);
+      let configScript = _.template(ConfigScript);
+      jetpack.write(projectNightingaleConfigPhpFile, configScript({
+        host: project.host,
+        port: 3306,
+        user: project.user,
+        password: project.password,
+        database: project.database
+      }));
+      
+      jetpack.file(projectNightingaleMigratePhpFile);
+      jetpack.write(projectNightingaleMigratePhpFile, MigrateScript);
+      
+      jetpack.file(projectNightingaleMigrationPhpFile);
+      jetpack.write(projectNightingaleMigrationPhpFile, MigrationScript);
+      
+      jetpack.file(projectNightingaleProjectPhpFile);
+      jetpack.write(projectNightingaleProjectPhpFile, ProjectScript);
+      
+      jetpack.file(projectNightingaleVersionPhpFile);
+      jetpack.write(projectNightingaleVersionPhpFile, VersionScript);
 
       // Create the post-checkout hooks
       if (!jetpack.exists(projectNightingaleGitPostCheckoutHookFile)) {
@@ -140,6 +179,15 @@ var AddProjectModalView = new BackboneModal({
       }
 
       jetpack.append(projectNightingaleGitPostCheckoutHookFile, postCheckoutHookScript);
+
+      // Add git ignore for the db.json and config.php files.
+      if (!jetpack.exists(projectNightingaleGitIgnoreFile)) {
+        jetpack.file(projectNightingaleGitIgnoreFile);
+      }
+      
+      if (!isExists) {
+        jetpack.append(projectNightingaleGitIgnoreFile, GitIgnore);
+      }
 
       // Read all migrations for db.json
       let migrationFiles = jetpack.list(projectNightingaleMigrationsDirectory)
