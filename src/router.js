@@ -16,6 +16,7 @@ var Router = BaseRouter.extend({
     'project/:projectId/versions/:versionId(/)' : 'showVersion',
     'project/:projectId/migrations(/)' : 'showMigrations',
     'project/:projectId/migrations/:migrationId(/)' : 'showMigration',
+    'project/:projectId/schema(/)' : 'showSchema',
     '*default' : 'showHome'
   },
   currentView: null,
@@ -56,6 +57,7 @@ var Router = BaseRouter.extend({
   
   //... Route handlers …
   showHome:function(){
+    $('.nav > .active').removeClass('active');
     $('body').trigger('breadcrumbs.clear');
     this.changeView(new HomeView());
   },
@@ -65,6 +67,8 @@ var Router = BaseRouter.extend({
     }));
   },
   showVersions:function(projectId){
+    $('.nav > .active').removeClass('active');
+    $('.nav #versions').addClass('active');
     $('body').trigger('breadcrumbs.replace', [{
       text: 'Versions',
       href: '#/project/'+projectId+'/versions/'
@@ -74,6 +78,8 @@ var Router = BaseRouter.extend({
     }));
   },
   showVersion:function(projectId, versionId){
+    $('.nav > .active').removeClass('active');
+    $('.nav #versions').addClass('active');
     $('body')
       .trigger('breadcrumbs.replace', [{
           text: 'Versions',
@@ -92,6 +98,8 @@ var Router = BaseRouter.extend({
     }));
   },
   showMigrations:function(projectId){
+    $('.nav > .active').removeClass('active');
+    $('.nav #migrations').addClass('active');
     $('body').trigger('breadcrumbs.replace', [{
       text: 'Migrations',
       href: '#/project/'+projectId+'/migrations/'
@@ -101,6 +109,8 @@ var Router = BaseRouter.extend({
     }));
   },
   showMigration:function(projectId, migrationId){
+    $('.nav > .active').removeClass('active');
+    $('.nav #migrations').addClass('active');
     $('body')
       .trigger('breadcrumbs.replace', [{
           text: 'Migrations',
@@ -116,6 +126,21 @@ var Router = BaseRouter.extend({
     this.changeView(new MigrationView({
       projectId: projectId,
       migrationId: migrationId
+    }));
+  },
+  showSchema:function(projectId){
+    $('.nav > .active').removeClass('active');
+    $('.nav #schema').addClass('active');
+    $('body')
+      .trigger('breadcrumbs.replace', [{
+          text: 'Schema',
+          href: '#/project/'+projectId+'/schema/'
+        }]);
+    if (migrationId == 'Create') {
+      migrationId = null
+    }
+    this.changeView(new SchemaView({
+      projectId: parseInt(projectId)
     }));
   },
 });

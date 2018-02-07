@@ -29,7 +29,7 @@ let template = `
       <% }); %>
       <% if (_.size(model.migrations) == 0) { %>
         <tr>
-          <td align="middle" colspan="3">No migrations.</td>
+          <td align="middle" colspan="5">No migrations.</td>
         </tr>
       <% } %>
     </tbody>

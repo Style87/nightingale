@@ -25,6 +25,10 @@ log.info('App starting...');
 // in config/env_xxx.json file.
 import env from './env';
 
+const Client    = require('ssh2').Client;
+const mysql = require('mysql2');
+import jetpack from 'fs-jetpack';
+
 const setApplicationMenu = () => {
   const menus = [];
   if (process.platform == 'darwin') {
@@ -49,6 +53,8 @@ if (env.name !== 'production') {
 
 app.on('ready', () => {
   setApplicationMenu();
+  var ssh = new Client();
+  var sql = null;
 
   const mainWindow = createWindow('main', {
     width: 1000,
@@ -85,6 +91,59 @@ app.on('ready', () => {
   
   ipcMain.on('check-for-update', function(){
     autoUpdater.checkForUpdates();
+  });
+  
+  ipcMain.on('sql-connect', function(e, sqlConfig, sshConfig){
+    if (sshConfig) {
+      ssh.on('ready', function() {
+        ssh.forwardOut(
+          '127.0.0.1',
+          12345,
+          '127.0.0.1',
+          3306,
+          function (err, stream) {
+            if (err) {
+              throw err;
+            }
+            sqlConfig.stream = stream;
+            sql = mysql.createConnection(sqlConfig);
+            sql.connect(function(err){
+              if (err) mainWindow.send('sql-error', err);
+              mainWindow.send('sql-connected');
+            })
+          }
+        )
+      })
+      .on('error', function(err){
+        mainWindow.send('ssh-error', err);
+      })
+      .connect(sshConfig);
+    }
+    else {
+      sql = mysql.createConnection(sqlConfig);
+      sql.connect(function(err){
+        if (err) mainWindow.send('sql-error', err);
+        mainWindow.send('sql-connected');
+      })
+    }
+  });
+  
+  ipcMain.on('sql-query', function(e, query){
+    sql.query(query, function(a, results, b){
+      mainWindow.send('sql-query-result', results);
+    });
+  })
+
+  ipcMain.on('sql-end', function(){
+    if (sql) {
+      sql.end();
+    }
+    if (ssh) {
+      mainWindow.send('ssh-end');
+      ssh.end();
+    }
+    
+    mainWindow.send('sql-end');
   })
 });
 

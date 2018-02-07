@@ -66,11 +66,12 @@ var MigrationsView = BaseView.extend({
         id: $(e.currentTarget).data('id')
       })
       , con = mysql.createConnection({
-        host: nProject.host,
-        user: nProject.user,
-        password: nProject.password,
-        database: nProject.database
-      });;
+        host: nProject.sqlHost,
+        user: nProject.sqlUser,
+        password: nProject.sqlPassword,
+        database: nProject.database,
+        multipleStatements: true
+      });
     migration.projectId = this.options.projectId;
 
     migration.fetch({

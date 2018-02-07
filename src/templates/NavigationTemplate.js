@@ -7,11 +7,12 @@ var template = `
       </div>
       <div class="navbar-collapse collapse navbar-inverse-collapse">
         <ul class="nav navbar-nav">
-          <li id="versions" class="nav-item disabled"><a disabled="disabled">Versions</a></li>
-          <li id="migrations" class="nav-item disabled"><a disabled="disabled">Migrations</a></li>
+          <li id="versions" class="nav-item"><a>Versions</a></li>
+          <li id="migrations" class="nav-item"><a>Migrations</a></li>
+          <li id="schema" class="nav-item"><a>Schema</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="javascript:void(0)" class="nav-project"></a></li>
+          <li><a id="nav-project" href="javascript:void(0)" class="nav-project"></a></li>
         </ul>
       </div>
     </div>

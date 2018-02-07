@@ -1,4 +1,6 @@
-let script = `<?php
+<?php
+
+<?php
 
 if (PHP_SAPI !== 'cli') {
   exit('Command line only execution allowed.');
@@ -76,6 +78,3 @@ foreach ($project->getMigrations() as $migration) {
 }
 
 $project->save();
-`;
-
-export { script };

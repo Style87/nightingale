@@ -21,7 +21,7 @@ var Backbone = require('backbone');
               var next = function(){
                   callback && callback.apply(router, args);
                   router.trigger.apply(router, ['route:' + name].concat(args));
-                  console.log('Route: ' + fragment);
+                  //console.log('Route: ' + fragment);
                   router.trigger('route', name, args);
                   Backbone.history.trigger('route', router, name, args);
                   router.after.apply(router, args);

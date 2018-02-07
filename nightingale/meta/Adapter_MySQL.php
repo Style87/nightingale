@@ -1,4 +1,4 @@
-let script = `<?php
+<?php
 class Adapter_MySQL
 {
 
@@ -50,31 +50,36 @@ class Adapter_MySQL
       {
         $schemaObject = $this->getSchemaObject($table);
         $schema['tables'][$table] = $schemaObject;
-        $sql .= $schemaObject . "\n";
+        $sql .= $schemaObject . "
+";
       }
       foreach ($this->getViews() as $table)
       {
         $schemaObject = $this->getSchemaObject($table);
         $schema['views'][$table] = $schemaObject;
-        $sql .= $schemaObject . "\n";
+        $sql .= $schemaObject . "
+";
       }
       foreach ($this->getTriggers() as $table)
       {
         $schemaObject = $this->getSchemaObject($table);
         $schema['triggers'][$table] = $schemaObject;
-        $sql .= $schemaObject . "\n";
+        $sql .= $schemaObject . "
+";
       }
       foreach ($this->getProcedures() as $table)
       {
         $schemaObject = $this->getSchemaObject($table);
         $schema['procedures'][$table] = $schemaObject;
-        $sql .= $schemaObject . "\n";
+        $sql .= $schemaObject . "
+";
       }
       foreach ($this->getFunctions() as $table)
       {
         $schemaObject = $this->getSchemaObject($table);
         $schema['functions'][$table] = $schemaObject;
-        $sql .= $schemaObject . "\n";
+        $sql .= $schemaObject . "
+";
       }
       return $schema;
     }
@@ -171,7 +176,7 @@ class Adapter_MySQL
                 return false;
         }
 
-        $query = "SHOW CREATE $type \`$name\`";
+        $query = "SHOW CREATE $type `$name`";
         $result = $this->query($query);
 
         $row = $result->fetch(PDO::FETCH_NUM);
@@ -179,13 +184,10 @@ class Adapter_MySQL
 
         // MySQL's SHOW CREATE TABLE command also includes the AUTO_INCREMENT value, so we're removing it here
         if ($type == 'table') {
-            $return = preg_replace("/\s?AUTO_INCREMENT=\d+\s?/", " ", $return);
+            $return = preg_replace("/s?AUTO_INCREMENT=d+s?/", " ", $return);
         }
 
         return $return;
     }
 
 }
-`;
-
-export { script };

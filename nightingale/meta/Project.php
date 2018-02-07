@@ -1,4 +1,4 @@
-let script = `<?php
+<?php
 class Project
 {
   protected $version;
@@ -219,6 +219,3 @@ class Project
     $this->migrateTo($this->getMaxVersionNumber());
   }
 }
-`;
-
-export { script };

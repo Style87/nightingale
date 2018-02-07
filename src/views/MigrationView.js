@@ -5,6 +5,8 @@
 import 'jquery';
 var _ = require('underscore');
 var Backbone = require('backbone');
+var codemirror = require('codemirror');
+require('codemirror/mode/sql/sql');
 import BaseView from '../core/BaseView.js';
 import Migration from '../models/Migration.js';
 import template from '../templates/MigrationTemplate.js';
@@ -19,6 +21,9 @@ const dbFile = path.join(app.getPath('userData'), 'db.json');
 const fileAsync = require('lowdb/lib/storages/file-async');
 
 var MigrationView = BaseView.extend({
+  editorSqlUp: null,
+  editorSqlDown: null,
+
   el: '#content',
 
   template: _.template(template),
@@ -44,6 +49,17 @@ var MigrationView = BaseView.extend({
     }
   },
 
+  afterRender: function() {
+    this.editorSqlUp = codemirror.fromTextArea(document.getElementById('sqlUp'), {
+      mode: 'text/x-sql',
+      lineNumbers: true,
+    });
+    this.editorSqlDown = codemirror.fromTextArea(document.getElementById('sqlDown'), {
+      mode: 'text/x-sql',
+      lineNumbers: true,
+    });
+  },
+
   onClickSave: function(e) {
     e.stopPropagation();
     e.preventDefault();
@@ -52,8 +68,8 @@ var MigrationView = BaseView.extend({
     this.model.save(
       {
         description: $('#description').val(),
-        sqlUp: $('#sqlUp').val(),
-        sqlDown: $('#sqlDown').val(),
+        sqlUp: self.editorSqlUp.doc.getValue(),
+        sqlDown: self.editorSqlDown.doc.getValue(),
         parentMigrationId: $('#parentMigrationId option:selected').val() == '' ? null : $('#parentMigrationId option:selected').val(),
       },
       {

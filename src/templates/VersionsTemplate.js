@@ -19,6 +19,11 @@ let template = `
           <td><input type="button" class="btn btn-default pull-right migrate <% if (project.version == index) { %> disabled<% } %>" <% if (project.version == index) { %> disabled="true" <% } %> value="Migrate" data-version="<%= version.id %>"></td>
         </tr>
       <% }); %>
+      <% if (_.size(project.versions) == 0) { %>
+        <tr>
+          <td align="middle" colspan="3">No versions.</td>
+        </tr>
+      <% } %>
     </tbody>
   </table>
 </div>

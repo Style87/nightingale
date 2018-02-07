@@ -17,3 +17,5 @@ Thumbs.db
 
 yarn.lock
 dev-app-update.yml
+nightingale/meta/db.json
+nightingale/meta/config.php

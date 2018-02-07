@@ -6,7 +6,6 @@
 let $ = require('jquery');
 let _ = require('underscore');
 let Backbone = require('backbone');
-import Migration from './Migration.js'
 import lowdb from 'lowdb';
 import path from 'path';
 import { remote } from 'electron';
@@ -17,14 +16,14 @@ const app = remote.app;
 const dbFile = path.join(app.getPath('userData'), 'db.json');
 const fileSync = require('lowdb/lib/storages/file-sync');
 
-var Version = Backbone.Model.extend({
-  idAttribute: 'id',
-
+var Schema = Backbone.Model.extend({
   projectId: null,
 
   defaults: {
-    id: null,
-    migrations: null
+    name: null,
+    sql: null,
+    onDisk: false,
+    onDb: false
   },
 
   sync: function(method, model, options) {
@@ -37,21 +36,6 @@ var Version = Backbone.Model.extend({
       options.success(version);
     }
     else {
-      let project = projectDb.getState();
-      if (method == 'create') {
-        project.versions[model.id] = {
-          id: model.id,
-          migrations: model.migrations.toJSON()
-        };
-      }
-      else if (method == 'update') {
-        project.versions[model.id].migrations = model.migrations.toJSON();
-      }
-      else if (method == 'delete') {
-        delete project.versions[model.id];
-      }
-
-      db.write();
       options.success();
     }
   },
@@ -176,4 +160,4 @@ var Version = Backbone.Model.extend({
   },
 });
 
-export default Version;
+export default Schema;

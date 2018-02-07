@@ -34,10 +34,7 @@ var HomeView = BaseView.extend({
 
   initialize: function() {
     var self = this;
-    
-    // this.childViews.addProjectModal = new AddProjectModalView({
-    //   id: 'add-project-modal'
-    // });
+
     this.childViews.addProjectModal = AddProjectModalView;
     $(document).on('hidden.bs.modal', '.add-project-modal', function(){
       self.render();
@@ -53,13 +50,14 @@ var HomeView = BaseView.extend({
   },
 
   afterRender: function(){
-    $('.nav-item').addClass('disabled');
-    $('.nav-item a').prop('disabled', true).prop('href', 'javascript:void(0)');
   },
 
   openAddProjectModal: function(e) {
     e.preventDefault();
     e.stopPropagation();
+    this.childViews.addProjectModal.setOptions({
+      class: 'add-project-modal'
+    })
     this.childViews.addProjectModal.open();
   },
 
@@ -84,6 +82,9 @@ var HomeView = BaseView.extend({
     // Sync project non-versioned migrations
     var dir = path.resolve(nProject.path, 'nightingale', 'migrations');
     fs.readdirSync(dir, 'utf8').forEach(function(file){
+      if (!file.match(/\.json$/)) {
+        return;
+      }
       var migrationId = file.replace('.json', '')
         , migration = _.findWhere(projectMigrations, { id: migrationId });
       if (typeof migration === 'undefined') {

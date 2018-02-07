@@ -74,7 +74,7 @@ var Migration = Backbone.Model.extend({
       }
     },
 
-    migrateUp: function(con) {
+    migrateUp: async function(con) {
       console.info('Migrate up ' + this.get('id'));
       let self = this
         , db = lowdb(dbFile, { storage: fileSync })
@@ -102,7 +102,7 @@ var Migration = Backbone.Model.extend({
         console.info('Migration ' + this.get('id'));
 
         console.info('Execute: ' + this.get('sqlUp'));
-        con.query(this.get('sqlUp'));
+        await con.query(this.get('sqlUp'));
 
         if (this.get('version') == null) {
           project.migrations[this.get('id')].hasRun = true;
@@ -117,7 +117,7 @@ var Migration = Backbone.Model.extend({
         return project;
     },
     
-    migrateDown: function(con) {
+    migrateDown: async function(con) {
       console.info('Migrate down ' + this.get('id'));
       let self = this
         , db = lowdb(dbFile, { storage: fileSync })
@@ -152,7 +152,7 @@ var Migration = Backbone.Model.extend({
         console.info('Migration ' + this.get('id'));
 
         console.info('Execute: ' + this.get('sqlDown'));
-        con.query(this.get('sqlDown'));
+        await con.query(this.get('sqlDown'));
         
         if (this.get('version') == null) {
           project.migrations[this.get('id')].hasRun = false;

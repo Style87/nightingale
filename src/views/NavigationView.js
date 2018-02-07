@@ -6,6 +6,8 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 import template from '../templates/NavigationTemplate.js';
+import { template as projectNameTemplate } from '../templates/NavigationProjectNameTemplate.js';
+import AddProjectModalView from './AddProjectModalView.js';
 import path from 'path';
 import { remote } from 'electron';
 import lowdb from 'lowdb';
@@ -15,13 +17,17 @@ const dbFile = path.join(app.getPath('userData'), 'db.json');
 const fileAsync = require('lowdb/lib/storages/file-async');
 
 var NavigationView = Backbone.View.extend({
-
+  childViews: {},
+  id: null,
   // Instead of generating a new element, bind to the existing skeleton of
   // the App already present in the HTML.
   el: '#wrapper',
 
   // Compile our stats template
   template: _.template(template),
+
+  // Compile our stats template
+  projectNameTemplate: _.template(projectNameTemplate),
 
   // Delegated events for creating new items, and clearing completed ones.
   events: {
@@ -32,25 +38,25 @@ var NavigationView = Backbone.View.extend({
   // collection, when items are added or changed. Kick things off by
   // loading any preexisting todos that might be saved in *localStorage*.
   initialize: function () {
+    var self = this;
     $('body').on('route', function(event){
       var route = Backbone.history.getFragment();
       if (route == '')
       {
-        $('.nav-project').text('');
-        $('.nav-item').addClass('disabled');
-        $('.nav-item a').prop('disabled', true);
+        $('#nav-project').addClass('hidden').html('');
+        $('.nav-item').hide().prop('href', 'javascript:void(0)');
         $('#breadcrumbs').hide();
       }
       else
       {
-        let id = parseInt(route.replace('project/','').replace(/\/.*$/, ''));
+        self.id = parseInt(route.replace('project/','').replace(/\/.*$/, ''));
         let db = lowdb(dbFile, fileAsync);
         let project = db.get('projects').find({
-          id: id
+          id: self.id
         }).value();
-        $('.nav-project').text(project.name);
-        $('.nav-item').removeClass('disabled');
-        $('.nav-item a').prop('disabled', false);
+
+        $('#nav-project').removeClass('hidden').html(self.projectNameTemplate(project));
+        $('.nav-item').show();
         $('#breadcrumbs').show();
       }
     })
@@ -76,6 +82,8 @@ var NavigationView = Backbone.View.extend({
         $('#breadcrumbs i:last-child').remove();
       }
     });
+
+    this.childViews.addProjectModal = AddProjectModalView;
   },
 
   // Re-rendering the App just means refreshing the statistics -- the rest
@@ -87,6 +95,19 @@ var NavigationView = Backbone.View.extend({
   onClickProjectName: function(e) {
     e.preventDefault();
     e.stopPropagation();
+
+    let db = lowdb(dbFile, fileAsync);
+    let project = db.get('projects').find({
+      id: this.id
+    }).value();
+
+    this.childViews.addProjectModal.setOptions({
+      class: 'edit-project-modal',
+      title: 'Edit Project',
+      project: project
+    });
+    
+    this.childViews.addProjectModal.open();
   },
 });
 
